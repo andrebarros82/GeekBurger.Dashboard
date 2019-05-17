@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GeekBurger.Dashboard.Controllers
 {
-    [Route("api/dashboards")]
+    [Route("api/dashboard")]
     public class DashboardController : Controller
     {
         public readonly List<UsersRestrictions> _usersRestrictions;
@@ -32,7 +32,7 @@ namespace GeekBurger.Dashboard.Controllers
         
         [HttpGet("sales/{per}/{value}")]
         public IActionResult GetSales(string per, int value)
-        {
+        {  
             return Ok(_sales);
         }
 
