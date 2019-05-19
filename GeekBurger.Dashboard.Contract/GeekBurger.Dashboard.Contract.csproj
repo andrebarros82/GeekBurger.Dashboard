@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>André / Alex</Authors>
+    <Company>GeekBurger</Company>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
 </Project>
