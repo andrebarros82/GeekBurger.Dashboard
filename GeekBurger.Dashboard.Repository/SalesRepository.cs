@@ -11,7 +11,7 @@ namespace GeekBurger.Dashboard.Repository
 {
     public class SalesRepository : ISalesRepository
     {
-        private readonly DashboardContext _dashboardContext;
+        private DashboardContext _dashboardContext;
 
         public SalesRepository(DashboardContext dashboardContext)
         {

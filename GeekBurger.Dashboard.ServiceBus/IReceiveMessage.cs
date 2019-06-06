@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 namespace GeekBurger.Dashboard.ServiceBus
 {
-    public interface IServiceBusMessage
+    public interface IReceiveMessage
     {
-        void ReceiveMessage();
+        Task ReceiveMessage(string topicName, string subscriptionName);
         Task MessageHandler(Message message, CancellationToken cancellationToken);
-
         Task ExceptionHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs);
     }
 }

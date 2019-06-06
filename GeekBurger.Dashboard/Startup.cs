@@ -7,6 +7,8 @@ using GeekBurger.Dashboard.Repository;
 using GeekBurger.Dashboard.Repository.DataContext;
 using GeekBurger.Dashboard.Repository.DataContext.Extensions;
 using GeekBurger.Dashboard.Repository.Interfaces;
+using GeekBurger.Dashboard.ServiceBus;
+using GeekBurger.Dashboard.ServiceBus.OrderChanged;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -24,14 +26,14 @@ namespace GeekBurger.Dashboard
         {
             IMvcCoreBuilder mvcCoreBuilder = services.AddMvcCore();
 
-            mvcCoreBuilder.AddFormatterMappings().AddJsonFormatters().AddCors();
-
-
-            services.AddDbContext<DashboardContext>(o => o.UseInMemoryDatabase("geekburger-dashboard"));
-            services.AddScoped<ISalesRepository, SalesRepository>();
-
+            mvcCoreBuilder.AddFormatterMappings().AddJsonFormatters().AddCors();           
 
             services.AddAutoMapper(typeof(Startup));
+    
+            services.AddSingleton(s => new DashboardContext(new DbContextOptionsBuilder<DashboardContext>().UseSqlite("Data Source=dashboard.db")));
+            services.AddSingleton<ISalesRepository, SalesRepository>();
+            services.AddSingleton<IServiceBusReceiveMessages, ServiceBusReceiveMessages>();
+            services.AddSingleton<IOrderChangedMessage, OrderChangedMessage>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +49,9 @@ namespace GeekBurger.Dashboard
             app.Run(async (context) =>
             {
                 await context.Response.WriteAsync("Hello World!");
-            });
+            });          
+
+            app.ApplicationServices.CreateScope().ServiceProvider.GetService<IServiceBusReceiveMessages>();
 
             dashboardContext.Seed();
         }

@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GeekBurger.Dashboard.Contract\GeekBurger.Dashboard.Contract.csproj" />
     <ProjectReference Include="..\GeekBurger.Dashboard.Repository\GeekBurger.Dashboard.Repository.csproj" />
+    <ProjectReference Include="..\GeekBurger.Dashboard.ServiceBus\GeekBurger.Dashboard.ServiceBus.csproj" />
   </ItemGroup>
 
 </Project>

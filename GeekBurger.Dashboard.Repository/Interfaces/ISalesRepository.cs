@@ -8,6 +8,7 @@ namespace GeekBurger.Dashboard.Repository.Interfaces
 {
     public interface ISalesRepository
     {
-        IEnumerable<Sales> GetAll();        
+        IEnumerable<Sales> GetAll();
+
     }
 }
