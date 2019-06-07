@@ -19,7 +19,8 @@ namespace GeekBurger.Dashboard.ServiceBus
 
         public void ReceiveMessages()
         {
-            _orderChangedMessage.ReceiveMessage("OrderChanged", "Loja");
+            //ORDER CHANGED
+            _orderChangedMessage.ReceiveMessage("OrderChanged", "Production");
             // Outras mensagens
         }
     }
