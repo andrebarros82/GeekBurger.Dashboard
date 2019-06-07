@@ -340,5 +340,5 @@ ASALocalRun/
 healthchecksdb
 
 
-\GeekBurger.Dashboard\appsettings.json
-\GeekBurger.Dashboard\dashboard.db
+/GeekBurger.Dashboard/appsettings.json
+/GeekBurger.Dashboard/dashboard.db
