@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace GeekBurger.Dashboard
 {
@@ -34,6 +35,13 @@ namespace GeekBurger.Dashboard
             services.AddSingleton<ISalesRepository, SalesRepository>();
             services.AddSingleton<IServiceBusReceiveMessages, ServiceBusReceiveMessages>();
             services.AddSingleton<IOrderChangedMessage, OrderChangedMessage>();
+
+            services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "API GeekBurger DashBoard", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,13 +53,14 @@ namespace GeekBurger.Dashboard
             }
 
             app.UseMvc();
-
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });          
+            app.UseSwagger();
 
             app.ApplicationServices.CreateScope().ServiceProvider.GetService<IServiceBusReceiveMessages>();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API GeekBurger DashBoard");
+            });
 
             dashboardContext.Seed();
         }
