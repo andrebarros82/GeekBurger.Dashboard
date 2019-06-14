@@ -6,12 +6,12 @@ namespace GeekBurger.Dashboard.ServiceBus
 {
     public class ServiceBusInfo
     {
-        public string ResourceGroup { get; }
-        public string NamespaceName { get; }
-        public string ConnectionString { get; }
-        public string ClientId { get; }
-        public string ClientSecret { get; }
-        public string SubscriptionId { get; }
-        public string TenantId { get; }
+        public string ResourceGroup { get; set; }
+        public string NamespaceName { get; set; }
+        public string ConnectionString { get; set; }
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
+        public string SubscriptionId { get; set; }
+        public string TenantId { get; set; }
     }
 }

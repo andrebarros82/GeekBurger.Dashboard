@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GeekBurger.Dashboard.ServiceBus.OrderChanged
+namespace GeekBurger.Dashboard.ServiceBus
 {
     public class OrderChanged
     {

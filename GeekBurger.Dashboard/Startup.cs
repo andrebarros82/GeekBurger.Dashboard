@@ -8,13 +8,13 @@ using GeekBurger.Dashboard.Repository.DataContext;
 using GeekBurger.Dashboard.Repository.DataContext.Extensions;
 using GeekBurger.Dashboard.Repository.Interfaces;
 using GeekBurger.Dashboard.ServiceBus;
-using GeekBurger.Dashboard.ServiceBus.OrderChanged;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace GeekBurger.Dashboard
 {
@@ -24,16 +24,25 @@ namespace GeekBurger.Dashboard
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            IMvcCoreBuilder mvcCoreBuilder = services.AddMvcCore();
+            IMvcCoreBuilder mvcCoreBuilder = services.AddMvcCore().AddApiExplorer();
 
             mvcCoreBuilder.AddFormatterMappings().AddJsonFormatters().AddCors();           
 
             services.AddAutoMapper(typeof(Startup));
-    
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Title = "Dashboard",
+                    Version = "v1"
+                });
+            });
+
             services.AddSingleton(s => new DashboardContext(new DbContextOptionsBuilder<DashboardContext>().UseSqlite("Data Source=dashboard.db")));
-            services.AddSingleton<ISalesRepository, SalesRepository>();
-            services.AddSingleton<IServiceBusReceiveMessages, ServiceBusReceiveMessages>();
-            services.AddSingleton<IOrderChangedMessage, OrderChangedMessage>();
+            services.AddSingleton<ISalesRepository, SalesRepository>();   
+         
+            services.AddHostedService<HostedServiceMessage>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,12 +55,17 @@ namespace GeekBurger.Dashboard
 
             app.UseMvc();
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dashboard");
+            });
+
+
             app.Run(async (context) =>
             {
                 await context.Response.WriteAsync("Hello World!");
-            });          
-
-            app.ApplicationServices.CreateScope().ServiceProvider.GetService<IServiceBusReceiveMessages>();
+            });       
 
             dashboardContext.Seed();
         }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GeekBurger.Dashboard.ServiceBus.NewOrder
+namespace GeekBurger.Dashboard.ServiceBus
 {
     public class NewOrder
     {
