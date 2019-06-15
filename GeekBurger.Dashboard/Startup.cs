@@ -26,7 +26,7 @@ namespace GeekBurger.Dashboard
         {
             IMvcCoreBuilder mvcCoreBuilder = services.AddMvcCore().AddApiExplorer();
 
-            mvcCoreBuilder.AddFormatterMappings().AddJsonFormatters().AddCors();           
+            mvcCoreBuilder.AddFormatterMappings().AddJsonFormatters().AddCors();
 
             services.AddAutoMapper(typeof(Startup));
 
@@ -39,9 +39,20 @@ namespace GeekBurger.Dashboard
                 });
             });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()                 
+                    .WithOrigins("http://localhost:51174")
+                    .AllowAnyHeader()
+                    );
+            });
+
             services.AddSingleton(s => new DashboardContext(new DbContextOptionsBuilder<DashboardContext>().UseSqlite("Data Source=dashboard.db")));
-            services.AddSingleton<ISalesRepository, SalesRepository>();   
-         
+            services.AddSingleton<ISalesRepository, SalesRepository>();
             services.AddHostedService<HostedServiceMessage>();
         }
 
@@ -64,10 +75,10 @@ namespace GeekBurger.Dashboard
 
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                await context.Response.WriteAsync("GeekBurger Dashboard");
             });       
 
-            dashboardContext.Seed();
+            // dashboardContext.Seed();
         }
     }
 }

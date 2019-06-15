@@ -9,6 +9,9 @@ namespace GeekBurger.Dashboard.Repository.Interfaces
     public interface ISalesRepository
     {
         IEnumerable<Sales> GetAll();
-
+        void Insert(Sales sales);
+        bool OrderExists(string orderId);
+        void Update(Sales sales);
+        Sales GetByOrderId(string orderId);
     }
 }

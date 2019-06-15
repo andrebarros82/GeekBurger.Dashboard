@@ -21,6 +21,28 @@ namespace GeekBurger.Dashboard.Repository
         public IEnumerable<Sales> GetAll()
         {
             return _dashboardContext.Sales?.ToList();
-        } 
+        }
+
+        public Sales GetByOrderId(string orderId)
+        {
+            return _dashboardContext.Sales.First(s => s.OrderId == orderId);
+        }
+
+        public void Insert(Sales sales)
+        {
+            _dashboardContext.Sales.Add(sales);
+            _dashboardContext.SaveChanges();
+        }
+
+        public bool OrderExists(string orderId)
+        {
+            return _dashboardContext.Sales.Any(s => s.OrderId == orderId);
+        }
+
+        public void Update(Sales sales)
+        {
+            _dashboardContext.Sales.Update(sales);
+            _dashboardContext.SaveChanges();
+        }
     }
 }

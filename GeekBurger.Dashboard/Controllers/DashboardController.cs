@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace GeekBurger.Dashboard.Controllers
@@ -31,7 +32,7 @@ namespace GeekBurger.Dashboard.Controllers
             else
                 return NotFound();
         }
-        
+
         [HttpGet("sales/{per}/{value}")]
         public IActionResult GetSales(string per, int value)
         {  
@@ -42,6 +43,17 @@ namespace GeekBurger.Dashboard.Controllers
         public IActionResult GetUsersWithLessOffer()
         {
             return Ok();
+        }
+        
+        [HttpGet("chart")]
+        public ContentResult GetChart()
+        {
+            return new ContentResult
+            {
+                ContentType = "text/html",
+                StatusCode = (int)HttpStatusCode.OK,
+                Content = System.IO.File.ReadAllText("chart.html")
+            };
         }
     }
 }

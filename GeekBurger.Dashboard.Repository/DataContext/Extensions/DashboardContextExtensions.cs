@@ -14,8 +14,8 @@ namespace GeekBurger.Dashboard.Repository.DataContext.Extensions
 
             for (var i = 0; i < 100; i++)
             {
-                dashboardContext.Sales.Add(new Sales { Id = Guid.NewGuid(), StoredId = new Guid("8048e9ec-80fe-4bad-bc2a-e4f4a75c834e"),
-                                                       Total = i, Value = "100" });
+                dashboardContext.Sales.Add(new Sales { Id = i.ToString(), StoreId = "1111",
+                                                       Value = "111" });
             }
 
             dashboardContext.SaveChanges();

@@ -6,8 +6,9 @@ namespace GeekBurger.Dashboard.Contract
 {
     public class SalesDTO
     {
-        public Guid StoredId { get; set; }
-        public int Total { get; set; }
+        public string StoreId { get; set; }
+        public string StoreName { get; set; }
+        public string Total { get; set; }
         public string Value { get; set; }
     }
 }

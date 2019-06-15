@@ -20,7 +20,7 @@ namespace GeekBurger.Dashboard.Repository.DataContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {       
-            modelBuilder.ApplyConfiguration(new SalesMap());
+            modelBuilder.ApplyConfiguration(new SalesMap());        
             base.OnModelCreating(modelBuilder);
         }
     }

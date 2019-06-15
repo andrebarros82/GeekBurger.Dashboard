@@ -20,12 +20,14 @@ namespace GeekBurger.Dashboard.ServiceBus
         private readonly ILogger _logger;       
         private readonly ISalesRepository _salesRepository;
         private ISubscriptionClient _subscriptionClientOrderChanged;
-        private ISubscriptionClient _subscriptionClientNewOrder;      
+        private ISubscriptionClient _subscriptionClientNewOrder;
 
         public HostedServiceMessage(ISalesRepository salesRepository, IConfiguration configuration, ILogger<HostedServiceMessage> logger)
         {
             ServiceBusInfo serviceBusInfo = configuration.GetSection("ServiceBus").Get<ServiceBusInfo>();
-            _salesRepository = salesRepository;
+
+            _salesRepository = salesRepository;      
+
             _logger = logger;
 
             _subscriptionClientOrderChanged = new SubscriptionClient(serviceBusInfo.ConnectionString, "orderchanged", "Dashboard");
@@ -81,11 +83,13 @@ namespace GeekBurger.Dashboard.ServiceBus
         {
             _logger.LogInformation($"Mensagem recebida: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
 
-            OrderChanged orderChanged = JsonConvert.DeserializeObject<OrderChanged>(Encoding.UTF8.GetString(message.Body));
+            Sales sales = JsonConvert.DeserializeObject<Sales>(Encoding.UTF8.GetString(message.Body));
+            State state = sales.State;
 
-            // Verificar de qual pedido pertence essa alteração e fazer o updade
-            // Sales sales;
-            // _salesRepository.Update(sales);
+            sales = _salesRepository.GetByOrderId(sales.OrderId);
+            sales.State = state;
+
+            _salesRepository.Update(sales);
 
             // "Finaliza" a mensagem para que ela não seja recebida novamente
             // Isso pode ser feito se o subscriptionClient for criado no modo ReceiveMode.PeekLock(que é o padrão)
@@ -95,6 +99,14 @@ namespace GeekBurger.Dashboard.ServiceBus
         public async Task MessageHandlerNewOrder(Message message, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Mensagem recebida: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
+
+            Sales sales = JsonConvert.DeserializeObject<Sales>(Encoding.UTF8.GetString(message.Body));
+
+            if (!_salesRepository.OrderExists(sales.OrderId))
+            {
+                sales.State = State.Open;
+                _salesRepository.Insert(sales);
+            }
 
             // "Finaliza" a mensagem para que ela não seja recebida novamente
             // Isso pode ser feito se o subscriptionClient for criado no modo ReceiveMode.PeekLock(que é o padrão)
