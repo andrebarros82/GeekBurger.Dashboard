@@ -1,5 +1,6 @@
 ﻿using GeekBurger.Dashboard.Repository.Interfaces;
 using GeekBurger.Dashboard.Repository.Model;
+using GeekBurger.Dashboard.Services;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -18,15 +19,18 @@ namespace GeekBurger.Dashboard.ServiceBus
     public class HostedServiceMessage : IHostedService
     {
         private readonly ILogger _logger;       
-        private readonly ISalesRepository _salesRepository;
+        private readonly ISalesService _salesService;
+        private readonly ILogMessage _logMessage;
         private ISubscriptionClient _subscriptionClientOrderChanged;
         private ISubscriptionClient _subscriptionClientNewOrder;
 
-        public HostedServiceMessage(ISalesRepository salesRepository, IConfiguration configuration, ILogger<HostedServiceMessage> logger)
+        public HostedServiceMessage(ISalesService salesService, IConfiguration configuration, 
+                                    ILogger<HostedServiceMessage> logger, ILogMessage logMessage)
         {
             ServiceBusInfo serviceBusInfo = configuration.GetSection("ServiceBus").Get<ServiceBusInfo>();
 
-            _salesRepository = salesRepository;      
+            _salesService = salesService;
+            _logMessage = logMessage;
 
             _logger = logger;
 
@@ -86,10 +90,10 @@ namespace GeekBurger.Dashboard.ServiceBus
             Sales sales = JsonConvert.DeserializeObject<Sales>(Encoding.UTF8.GetString(message.Body));
             State state = sales.State;
 
-            sales = _salesRepository.GetByOrderId(sales.OrderId);
+            sales = _salesService.GetByOrderId(sales.OrderId);
             sales.State = state;
 
-            _salesRepository.Update(sales);
+            _salesService.Update(sales);
 
             // "Finaliza" a mensagem para que ela não seja recebida novamente
             // Isso pode ser feito se o subscriptionClient for criado no modo ReceiveMode.PeekLock(que é o padrão)
@@ -102,10 +106,9 @@ namespace GeekBurger.Dashboard.ServiceBus
 
             Sales sales = JsonConvert.DeserializeObject<Sales>(Encoding.UTF8.GetString(message.Body));
 
-            if (!_salesRepository.OrderExists(sales.OrderId))
-            {
-                sales.State = State.Open;
-                _salesRepository.Insert(sales);
+            if (!_salesService.OrderExists(sales.OrderId))
+            {     
+                _salesService.Insert(sales);
             }
 
             // "Finaliza" a mensagem para que ela não seja recebida novamente
@@ -123,6 +126,8 @@ namespace GeekBurger.Dashboard.ServiceBus
             _logger.LogInformation($"- Endpoint: {exceptionReceivedContext.Endpoint}");
             _logger.LogInformation($"- Entity Path: {exceptionReceivedContext.EntityPath}");
             _logger.LogInformation($"- Executing Action: {exceptionReceivedContext.Action}");
+
+            _logMessage.Log(exceptionReceivedEventArgs.Exception.Message);
 
             return Task.CompletedTask;
         }

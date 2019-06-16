@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GeekBurger.Dashboard.Contract;
 using GeekBurger.Dashboard.Repository.Interfaces;
+using GeekBurger.Dashboard.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,22 +14,23 @@ namespace GeekBurger.Dashboard.Controllers
     [Route("api/dashboard")]
     public class DashboardController : Controller
     {
-        private readonly ISalesRepository _salesRepository;
+        private readonly ISalesService _salesService;
         private readonly IMapper _mapper;
 
-        public DashboardController(ISalesRepository salesRepository, IMapper mapper)
+        public DashboardController(ISalesService salesService, IMapper mapper)
         {
-            _salesRepository = salesRepository;
+            _salesService = salesService;
             _mapper = mapper;
         }
 
         [HttpGet("sales")]
         public IActionResult GetSales()
         {
-            IEnumerable<SalesDTO> sales = _mapper.Map<IEnumerable<SalesDTO>>(_salesRepository.GetAll());
+            IEnumerable<SalesDTO> salesDTOs = _salesService.GetAllSalesCompleted().GroupBy(g => g.StoreName)
+                                              .Select(x => new SalesDTO { StoreName = x.Key, Total = x.Count(), Value = x.Sum(s => s.Value) });
 
-            if (sales.ToList().Count > 0)
-                return Ok(sales);
+            if (salesDTOs.ToList().Count > 0)
+                return Ok(salesDTOs);
             else
                 return NotFound();
         }
@@ -54,6 +56,6 @@ namespace GeekBurger.Dashboard.Controllers
                 StatusCode = (int)HttpStatusCode.OK,
                 Content = System.IO.File.ReadAllText("chart.html")
             };
-        }
+        }    
     }
 }

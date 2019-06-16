@@ -8,6 +8,7 @@ using GeekBurger.Dashboard.Repository.DataContext;
 using GeekBurger.Dashboard.Repository.DataContext.Extensions;
 using GeekBurger.Dashboard.Repository.Interfaces;
 using GeekBurger.Dashboard.ServiceBus;
+using GeekBurger.Dashboard.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -47,12 +48,13 @@ namespace GeekBurger.Dashboard
                     .AllowAnyHeader()
                     .AllowCredentials()                 
                     .WithOrigins("http://localhost:51174")
-                    .AllowAnyHeader()
-                    );
+                    .AllowAnyHeader());
             });
 
             services.AddSingleton(s => new DashboardContext(new DbContextOptionsBuilder<DashboardContext>().UseSqlite("Data Source=dashboard.db")));
+            services.AddSingleton<ISalesService, SalesService>();
             services.AddSingleton<ISalesRepository, SalesRepository>();
+            services.AddSingleton<ILogMessage, LogMessage>();
             services.AddHostedService<HostedServiceMessage>();
         }
 

@@ -18,9 +18,9 @@ namespace GeekBurger.Dashboard.Repository
             _dashboardContext = dashboardContext;
         }
 
-        public IEnumerable<Sales> GetAll()
+        public IEnumerable<Sales> GetAllSalesCompleted()
         {
-            return _dashboardContext.Sales?.ToList();
+            return _dashboardContext.Sales?.Where(s => s.State == State.Finished);
         }
 
         public Sales GetByOrderId(string orderId)

@@ -15,7 +15,7 @@ namespace GeekBurger.Dashboard.Repository.DataContext.Extensions
             for (var i = 0; i < 100; i++)
             {
                 dashboardContext.Sales.Add(new Sales { Id = i.ToString(), StoreId = "1111",
-                                                       Value = "111" });
+                                                       Value = 111 });
             }
 
             dashboardContext.SaveChanges();

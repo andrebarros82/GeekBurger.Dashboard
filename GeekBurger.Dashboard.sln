@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekBurger.Dashboard", "Gee
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekBurger.Dashboard.Contract", "GeekBurger.Dashboard.Contract\GeekBurger.Dashboard.Contract.csproj", "{4893E4FE-C2F6-4EF4-91F2-13CF430642C5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekBurger.Dashboard.ServiceBus", "GeekBurger.Dashboard.ServiceBus\GeekBurger.Dashboard.ServiceBus.csproj", "{A9DA8B81-1340-49AF-B2B8-02813E5A11CA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekBurger.Dashboard.Repository", "GeekBurger.Dashboard.Repository\GeekBurger.Dashboard.Repository.csproj", "{B2CFD115-E6DF-41A5-8060-69B8039B26D5}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{4893E4FE-C2F6-4EF4-91F2-13CF430642C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4893E4FE-C2F6-4EF4-91F2-13CF430642C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4893E4FE-C2F6-4EF4-91F2-13CF430642C5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A9DA8B81-1340-49AF-B2B8-02813E5A11CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A9DA8B81-1340-49AF-B2B8-02813E5A11CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A9DA8B81-1340-49AF-B2B8-02813E5A11CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A9DA8B81-1340-49AF-B2B8-02813E5A11CA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B2CFD115-E6DF-41A5-8060-69B8039B26D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B2CFD115-E6DF-41A5-8060-69B8039B26D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2CFD115-E6DF-41A5-8060-69B8039B26D5}.Release|Any CPU.ActiveCfg = Release|Any CPU

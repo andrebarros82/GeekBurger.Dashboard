@@ -15,8 +15,9 @@ namespace GeekBurger.Dashboard.Repository.Model
         public string OrderId { get; set; }
 
         [JsonProperty(PropertyName = "Total")]
-        public string Value { get; set; }
+        public decimal Value { get; set; }
         public State State { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
     public enum State

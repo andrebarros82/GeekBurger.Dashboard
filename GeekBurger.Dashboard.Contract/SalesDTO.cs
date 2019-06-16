@@ -8,7 +8,7 @@ namespace GeekBurger.Dashboard.Contract
     {
         public string StoreId { get; set; }
         public string StoreName { get; set; }
-        public string Total { get; set; }
-        public string Value { get; set; }
+        public int Total { get; set; }
+        public decimal Value { get; set; }
     }
 }
