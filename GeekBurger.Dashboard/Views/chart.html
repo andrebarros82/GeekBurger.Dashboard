@@ -17,7 +17,7 @@
             method: 'GET',
             accept: 'application/json',
             success(restrictions) {
-                response.forEach(function (e) {
+                restrictions.forEach(function (e) {
                     restrictions.push({
                         'name': e.restrictions, 'y': e.users
                     });
