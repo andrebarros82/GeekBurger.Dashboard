@@ -19,7 +19,7 @@ namespace GeekBurger.Dashboard.Controllers
         private readonly IUserWithLessOfferService _userWithLessOfferService;
         private readonly IMapper _mapper;
 
-        public DashboardController(ISalesService salesService, IUserWithLessOfferService userWithLessOfferService ,IMapper mapper)
+        public DashboardController(ISalesService salesService, IUserWithLessOfferService userWithLessOfferService, IMapper mapper)
         {
             _salesService = salesService;
             _userWithLessOfferService = userWithLessOfferService;
@@ -42,12 +42,13 @@ namespace GeekBurger.Dashboard.Controllers
         public IActionResult GetSales(string per, int value)
         {
             DateTime dataCorte = DateTime.Now;
-            if (per.Contains("hour"))
-                dataCorte = dataCorte.AddHours(value * -1);
-            else if (per.Contains("minute"))
+            if (per.Contains("minute"))
                 dataCorte = dataCorte.AddMinutes(value * -1);
             else if (per.Contains("second"))
                 dataCorte = dataCorte.AddSeconds(value * -1);
+            else
+                dataCorte = dataCorte.AddHours(value * -1);
+
 
             IEnumerable<SalesDTO> salesDTOs = _salesService.GetAllPaidSalesByPeriod(dataCorte).Result.GroupBy(g => g.StoreName)
                                            .Select(x => new SalesDTO { StoreName = x.Key, Total = x.Count(), Value = x.Sum(s => s.Value) });
@@ -66,7 +67,7 @@ namespace GeekBurger.Dashboard.Controllers
 
             return Ok();
         }
-        
+
         [HttpGet("chart")]
         public ContentResult GetChart()
         {
@@ -81,11 +82,13 @@ namespace GeekBurger.Dashboard.Controllers
         [HttpGet("chart/{per}/{value}")]
         public ContentResult GetChart(string per, int value)
         {
+            string html = System.IO.File.ReadAllText("Views/chart.html").Replace("{param1}", per).Replace("{param2}", value.ToString()).Replace("parameter = false", "parameter = true");
+
             return new ContentResult
             {
                 ContentType = "text/html",
                 StatusCode = (int)HttpStatusCode.OK,
-                Content = System.IO.File.ReadAllText("Views/chart.html")
+                Content = html,
             };
         }
     }

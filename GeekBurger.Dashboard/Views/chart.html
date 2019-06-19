@@ -50,10 +50,20 @@
                 series: [{ name: 'Dados', data: restrictions }]
             });
         }
+        var per = "{param1}";
+        var value = "{param2}";
+        var parameter = false;
 
+        var url;
+        if (parameter) {
+            url = "http://localhost:51174/api/dashboard/sales/" + per + "/" + value;
+        }
+        else {
+            url = "http://localhost:51174/api/dashboard/sales";
+        }
         // Sales
         $.ajax({
-            url: 'http://localhost:51174/api/dashboard/sales',
+            url: url,
             method: 'GET',
             accept: 'application/json',
             success(response) {
@@ -118,6 +128,18 @@
                 }]
             });
         }
+
+         function getParamsMap() {
+            var params = window.location.search.split("&");
+            var paramsMap = {};
+            params.forEach(function (p) {
+                var v = p.split("=");
+                paramsMap[v[0]] = decodeURIComponent(v[1]);
+            });
+            return paramsMap;
+        };
+
+       
     </script>
 </head>
 <body>
