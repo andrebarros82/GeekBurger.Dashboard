@@ -40,8 +40,22 @@ namespace GeekBurger.Dashboard.Controllers
 
         [HttpGet("sales/{per}/{value}")]
         public IActionResult GetSales(string per, int value)
-        {  
-            return Ok();
+        {
+            DateTime dataCorte = DateTime.Now;
+            if (per.Contains("hour"))
+                dataCorte = dataCorte.AddHours(value * -1);
+            else if (per.Contains("minute"))
+                dataCorte = dataCorte.AddMinutes(value * -1);
+            else if (per.Contains("second"))
+                dataCorte = dataCorte.AddSeconds(value * -1);
+
+            IEnumerable<SalesDTO> salesDTOs = _salesService.GetAllPaidSalesByPeriod(dataCorte).Result.GroupBy(g => g.StoreName)
+                                           .Select(x => new SalesDTO { StoreName = x.Key, Total = x.Count(), Value = x.Sum(s => s.Value) });
+
+            if (salesDTOs.ToList().Count > 0)
+                return Ok(salesDTOs);
+            else
+                return NotFound();
         }
 
         [HttpGet("usersWithLessOffer")]

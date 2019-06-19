@@ -9,6 +9,7 @@ namespace GeekBurger.Dashboard.Repository.Interfaces
     public interface ISalesRepository
     {
         Task<IEnumerable<Sales>> GetAllSalesCompleted();
+        Task<IEnumerable<Sales>> GetAllPaidSalesByPeriod(DateTime dataCorte);
         Task Insert(Sales sales);
         Task<bool> OrderExists(string orderId);
         Task Update(Sales sales);

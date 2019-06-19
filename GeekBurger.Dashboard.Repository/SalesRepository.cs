@@ -24,6 +24,12 @@ namespace GeekBurger.Dashboard.Repository
             return await _dashboardContext.Sales?.Where(s => s.State == State.Finished).ToListAsync();
         }
 
+        public async Task<IEnumerable<Sales>> GetAllPaidSalesByPeriod(DateTime dataCorte)
+        {
+            return await _dashboardContext.Sales?.Where(s => s.State == State.Paid && s.CreatedAt > dataCorte).ToListAsync();
+        }
+
+
         public async Task<Sales> GetByOrderId(string orderId)
         {
             return await _dashboardContext.Sales.FirstAsync(s => s.OrderId == orderId);

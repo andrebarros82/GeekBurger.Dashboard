@@ -13,5 +13,6 @@ namespace GeekBurger.Dashboard.Services
         Task<bool> OrderExists(string orderId);
         Task Insert(Sales sales);
         Task<IEnumerable<Sales>> GetAllSalesCompleted();
+        Task<IEnumerable<Sales>> GetAllPaidSalesByPeriod(DateTime dataCorte);
     }
 }

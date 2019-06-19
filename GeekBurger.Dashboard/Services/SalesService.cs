@@ -26,6 +26,12 @@ namespace GeekBurger.Dashboard.Services
             return await _salesRepository.GetAllSalesCompleted();
         }
 
+        public async Task<IEnumerable<Sales>> GetAllPaidSalesByPeriod(DateTime dataCorte)
+        {
+            return await _salesRepository.GetAllPaidSalesByPeriod(dataCorte);
+    }
+
+        
         public async Task Insert(Sales sales)
         {
             sales.State = State.Open;
