@@ -47,10 +47,10 @@ namespace GeekBurger.Dashboard.Controllers
         [HttpGet("usersWithLessOffer")]
         public IActionResult GetUsersWithLessOffer()
         {
-            IEnumerable<UsersRestrictionsDTO> usersRestrictionsDTOs = _userWithLessOfferService.GetAll().Result.GroupBy(g => g.UserRestrictions)
-                                  .Select(x => new UsersRestrictionsDTO { Restrictions = x.Key, Users = x.Count() });
+            //IEnumerable<UsersRestrictionsDTO> usersRestrictionsDTOs = _userWithLessOfferService.GetAll().Result.GroupBy(g => g.UserRestrictions)
+            //                      .Select(x => new UsersRestrictionsDTO { Restrictions = x.Key., Users = x.Count() });
 
-            return Ok(usersRestrictionsDTOs);
+            return Ok();
         }
         
         [HttpGet("chart")]
