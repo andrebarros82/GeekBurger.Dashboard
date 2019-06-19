@@ -8,10 +8,10 @@ namespace GeekBurger.Dashboard.Repository.Interfaces
 {
     public interface ISalesRepository
     {
-        IEnumerable<Sales> GetAllSalesCompleted();
-        void Insert(Sales sales);
-        bool OrderExists(string orderId);
-        void Update(Sales sales);
-        Sales GetByOrderId(string orderId);
+        Task<IEnumerable<Sales>> GetAllSalesCompleted();
+        Task Insert(Sales sales);
+        Task<bool> OrderExists(string orderId);
+        Task Update(Sales sales);
+        Task<Sales> GetByOrderId(string orderId);
     }
 }

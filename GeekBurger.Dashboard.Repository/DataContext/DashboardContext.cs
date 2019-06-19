@@ -15,12 +15,16 @@ namespace GeekBurger.Dashboard.Repository.DataContext
             Database.EnsureCreated();
         }
 
+        public DbSet<UserRestriction> UserRestrictions { get; set; }
+        public DbSet<UserWithLessOffer> UserWithLessOffers { get; set; }
         public DbSet<Sales> Sales { get; set; }
-        public DbSet<UsersRestrictions> UsersRestrictions { get; set; }
+        public DbSet<UserWithLessOffer> UsersRestrictions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {       
-            modelBuilder.ApplyConfiguration(new SalesMap());        
+            modelBuilder.ApplyConfiguration(new SalesMap());
+            modelBuilder.ApplyConfiguration(new UserWithLessOfferMap());
+            modelBuilder.ApplyConfiguration(new UserRestrictionMap());
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -8,10 +8,10 @@ namespace GeekBurger.Dashboard.Services
 {
     public interface ISalesService
     {
-        Sales GetByOrderId(string orderId);
-        void Update(Sales sales);
-        bool OrderExists(string orderId);
-        void Insert(Sales sales);
-        IEnumerable<Sales> GetAllSalesCompleted();
+        Task <Sales> GetByOrderId(string orderId);
+        Task Update(Sales sales);
+        Task<bool> OrderExists(string orderId);
+        Task Insert(Sales sales);
+        Task<IEnumerable<Sales>> GetAllSalesCompleted();
     }
 }

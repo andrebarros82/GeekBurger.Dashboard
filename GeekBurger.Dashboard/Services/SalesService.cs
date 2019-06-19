@@ -16,32 +16,32 @@ namespace GeekBurger.Dashboard.Services
             _salesRepository = salesRepository;
         }
 
-        public Sales GetByOrderId(string orderId)
+        public async Task<Sales> GetByOrderId(string orderId)
         {
-            return _salesRepository.GetByOrderId(orderId);
+            return await _salesRepository.GetByOrderId(orderId);
         }
 
-        public IEnumerable<Sales> GetAllSalesCompleted()
+        public async Task<IEnumerable<Sales>> GetAllSalesCompleted()
         {
-            return _salesRepository.GetAllSalesCompleted();
+            return await _salesRepository.GetAllSalesCompleted();
         }
 
-        public void Insert(Sales sales)
+        public async Task Insert(Sales sales)
         {
             sales.State = State.Open;
             sales.CreatedAt = DateTime.Now;
 
-            _salesRepository.Insert(sales);
+            await _salesRepository.Insert(sales);
         }
 
-        public bool OrderExists(string orderId)
+        public async Task<bool> OrderExists(string orderId)
         {
-            return _salesRepository.OrderExists(orderId);
+            return await _salesRepository.OrderExists(orderId);
         }
 
-        public void Update(Sales sales)
+        public async Task Update(Sales sales)
         {
-            _salesRepository.Update(sales);
+            await _salesRepository.Update(sales);
         }
     }
 }

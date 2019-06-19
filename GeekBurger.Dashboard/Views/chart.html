@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript">
+
+        var stores = [];
+        var orders = [];
+        var values = [];       
+
+        // usersWithLessOffer
+        $.ajax({
+            url: 'http://localhost:51174/api/dashboard/usersWithLessOffer',
+            method: 'GET',
+            accept: 'application/json',
+            success(restrictions) {
+                response.forEach(function (e) {
+                    restrictions.push({
+                        'name': e.restrictions, 'y': e.users
+                    });
+                });
+                usersWithLessOffer(restrictions);
+            },
+            error(erro) {
+                alert('failed to get usersWithLessOffer API');
+            }
+        });
+
+        function usersWithLessOffer(restrictions) {
+            Highcharts.chart('usersWithLessOffer', {
+                chart: { type: 'pie' },
+                title: {
+                    text: 'Users with less product offering (less than 4 products in Kiosk)'
+                },
+            tooltip: {
+                pointFormat: '{series.name}: < b > { point.percentage: .1f } %</b > ' },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                            cursor: 'pointer',
+                                dataLabels: {
+                            enabled: true,                                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                        }
+                    }
+                },
+                series: [{ name: 'Dados', data: restrictions }]
+            });
+        }
+
+        // Sales
+        $.ajax({
+            url: 'http://localhost:51174/api/dashboard/sales',
+            method: 'GET',
+            accept: 'application/json',
+            success(response) {
+                response.forEach(function (e) {
+                    stores.push(e.storeName);
+                    orders.push(e.total);
+                    values.push(e.value);
+                });
+                ordersPerStore(stores, orders, values);
+            },
+            error(erro) {
+            }
+        });
+
+        function ordersPerStore(stores, orders, values) {
+            var color1 = Highcharts.getOptions().colors[1];
+            var color0 = Highcharts.getOptions().colors[0];
+            Highcharts.chart('sales', {
+                chart: { zoomType: 'xy' },
+                title: { text: 'Orders per store' },
+                xAxis: [{ categories: stores, crosshair: true }],
+                yAxis: [{
+                    labels: {
+                        format: 'USD {value}',
+                        style: { color: color1 }
+                    },
+                    title: {
+                        text: 'Totals',
+                        style: { color: color1 }
+                    }
+                },
+                {
+                    title: {
+                        text: 'Orders',
+                        style: { color: color0 }
+                    },
+                    labels: {
+                        format: '{value}',
+                        style: { color: color0 }
+                    },
+                    opposite: true
+                }],
+                tooltip: { shared: true },
+                legend: {
+                    layout: 'vertical',
+                    align: 'left',
+                    x: 120,
+                    verticalAlign: 'top',
+                    y: 100,
+                    floating: true
+                },
+                series: [{
+                    name: 'Orders',
+                    type: 'column',
+                    yAxis: 1,
+                    data: orders
+                }, {
+                    name: 'Totals',
+                    type: 'spline',
+                    data: values,
+                    tooltip: { valuePrefix: 'USD ' }
+                }]
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="sales"></div>
+</body>
+</html>

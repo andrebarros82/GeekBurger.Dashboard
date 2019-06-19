@@ -20,20 +20,25 @@ namespace GeekBurger.Dashboard.ServiceBus
     {
         private readonly ILogger _logger;       
         private readonly ISalesService _salesService;
+        private readonly IUserWithLessOfferService _userWithLessOfferService;
         private readonly ILogMessage _logMessage;
         private ISubscriptionClient _subscriptionClientOrderChanged;
         private ISubscriptionClient _subscriptionClientNewOrder;
+        private ISubscriptionClient _subscriptionClientUserWithLessOffer;
 
-        public HostedServiceMessage(ISalesService salesService, IConfiguration configuration, 
-                                    ILogger<HostedServiceMessage> logger, ILogMessage logMessage)
+        public HostedServiceMessage(ISalesService salesService, IUserWithLessOfferService userWithLessOfferService,
+                                    IConfiguration configuration, ILogger<HostedServiceMessage> logger, 
+                                    ILogMessage logMessage)
         {
             ServiceBusInfo serviceBusInfo = configuration.GetSection("ServiceBus").Get<ServiceBusInfo>();
 
             _salesService = salesService;
+            _userWithLessOfferService = userWithLessOfferService;
             _logMessage = logMessage;
 
             _logger = logger;
 
+            _subscriptionClientUserWithLessOffer = new SubscriptionClient(serviceBusInfo.ConnectionString, "userwithlessoffer", "Dashboard");
             _subscriptionClientOrderChanged = new SubscriptionClient(serviceBusInfo.ConnectionString, "orderchanged", "Dashboard");
             _subscriptionClientNewOrder = new SubscriptionClient(serviceBusInfo.ConnectionString, "neworder", "Dashboard");
         }
@@ -51,19 +56,9 @@ namespace GeekBurger.Dashboard.ServiceBus
         
         private void DoWork()
         {
-            MainAsync().GetAwaiter().GetResult();
-        }
-
-        private async Task MainAsync()
-        {
             // Receber mensagens em um loop
             ReceiveMessage();
-
-            Console.ReadKey();
-
-            await _subscriptionClientOrderChanged.CloseAsync();
-            await _subscriptionClientNewOrder.CloseAsync();
-        }
+        }  
 
         private void ReceiveMessage()
         { 
@@ -79,8 +74,28 @@ namespace GeekBurger.Dashboard.ServiceBus
             };
 
             // Registra o método que processará as mensagens
+            _subscriptionClientUserWithLessOffer.RegisterMessageHandler(MessageHandlerUserWithLessOffer, messageHandlerOptions);
             _subscriptionClientOrderChanged.RegisterMessageHandler(MessageHandlerOrderChanged, messageHandlerOptions);
             _subscriptionClientNewOrder.RegisterMessageHandler(MessageHandlerNewOrder, messageHandlerOptions);
+        }
+
+        private async Task MessageHandlerUserWithLessOffer(Message message, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"Mensagem recebida: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
+
+            UserWithLessOffer userWithLessOffer = JsonConvert.DeserializeObject<UserWithLessOffer>(Encoding.UTF8.GetString(message.Body));
+
+            foreach(string restriction in userWithLessOffer.Restrictions)
+            {
+                userWithLessOffer.UserRestrictions = new List<UserRestriction>();
+                userWithLessOffer.UserRestrictions.Add(new UserRestriction { Restriction = restriction });
+            }
+
+            await _userWithLessOfferService.Insert(userWithLessOffer);
+
+            // "Finaliza" a mensagem para que ela não seja recebida novamente
+            // Isso pode ser feito se o subscriptionClient for criado no modo ReceiveMode.PeekLock(que é o padrão)
+            await _subscriptionClientUserWithLessOffer.CompleteAsync(message.SystemProperties.LockToken);
         }
 
         public async Task MessageHandlerOrderChanged(Message message, CancellationToken cancellationToken)
@@ -90,10 +105,10 @@ namespace GeekBurger.Dashboard.ServiceBus
             Sales sales = JsonConvert.DeserializeObject<Sales>(Encoding.UTF8.GetString(message.Body));
             State state = sales.State;
 
-            sales = _salesService.GetByOrderId(sales.OrderId);
+            sales = await _salesService.GetByOrderId(sales.OrderId);
             sales.State = state;
 
-            _salesService.Update(sales);
+            await _salesService.Update(sales);
 
             // "Finaliza" a mensagem para que ela não seja recebida novamente
             // Isso pode ser feito se o subscriptionClient for criado no modo ReceiveMode.PeekLock(que é o padrão)
@@ -106,9 +121,9 @@ namespace GeekBurger.Dashboard.ServiceBus
 
             Sales sales = JsonConvert.DeserializeObject<Sales>(Encoding.UTF8.GetString(message.Body));
 
-            if (!_salesService.OrderExists(sales.OrderId))
+            if (!_salesService.OrderExists(sales.OrderId).Result)
             {     
-                _salesService.Insert(sales);
+                await _salesService.Insert(sales);
             }
 
             // "Finaliza" a mensagem para que ela não seja recebida novamente

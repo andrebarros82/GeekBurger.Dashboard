@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GeekBurger.Dashboard.Contract;
 using GeekBurger.Dashboard.Repository.Interfaces;
+using GeekBurger.Dashboard.Repository.Model;
 using GeekBurger.Dashboard.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,18 +16,20 @@ namespace GeekBurger.Dashboard.Controllers
     public class DashboardController : Controller
     {
         private readonly ISalesService _salesService;
+        private readonly IUserWithLessOfferService _userWithLessOfferService;
         private readonly IMapper _mapper;
 
-        public DashboardController(ISalesService salesService, IMapper mapper)
+        public DashboardController(ISalesService salesService, IUserWithLessOfferService userWithLessOfferService ,IMapper mapper)
         {
             _salesService = salesService;
+            _userWithLessOfferService = userWithLessOfferService;
             _mapper = mapper;
         }
 
         [HttpGet("sales")]
         public IActionResult GetSales()
         {
-            IEnumerable<SalesDTO> salesDTOs = _salesService.GetAllSalesCompleted().GroupBy(g => g.StoreName)
+            IEnumerable<SalesDTO> salesDTOs = _salesService.GetAllSalesCompleted().Result.GroupBy(g => g.StoreName)
                                               .Select(x => new SalesDTO { StoreName = x.Key, Total = x.Count(), Value = x.Sum(s => s.Value) });
 
             if (salesDTOs.ToList().Count > 0)
@@ -44,7 +47,10 @@ namespace GeekBurger.Dashboard.Controllers
         [HttpGet("usersWithLessOffer")]
         public IActionResult GetUsersWithLessOffer()
         {
-            return Ok();
+            IEnumerable<UsersRestrictionsDTO> usersRestrictionsDTOs = _userWithLessOfferService.GetAll().Result.GroupBy(g => g.Restrictions.ToString())
+                                  .Select(x => new UsersRestrictionsDTO { Restrictions = x.Key, Users = x.Count() });
+
+            return Ok(usersRestrictionsDTOs);
         }
         
         [HttpGet("chart")]
@@ -54,7 +60,7 @@ namespace GeekBurger.Dashboard.Controllers
             {
                 ContentType = "text/html",
                 StatusCode = (int)HttpStatusCode.OK,
-                Content = System.IO.File.ReadAllText("chart.html")
+                Content = System.IO.File.ReadAllText("Views/chart.html")
             };
         }    
     }

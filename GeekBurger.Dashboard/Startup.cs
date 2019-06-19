@@ -53,7 +53,9 @@ namespace GeekBurger.Dashboard
 
             services.AddSingleton(s => new DashboardContext(new DbContextOptionsBuilder<DashboardContext>().UseSqlite("Data Source=dashboard.db")));
             services.AddSingleton<ISalesService, SalesService>();
+            services.AddSingleton<IUserWithLessOfferService, UserWithLessOfferService>();
             services.AddSingleton<ISalesRepository, SalesRepository>();
+            services.AddSingleton<IUserWithLessOfferRepository, UserWithLessOfferRepository>();
             services.AddSingleton<ILogMessage, LogMessage>();
             services.AddHostedService<HostedServiceMessage>();
         }

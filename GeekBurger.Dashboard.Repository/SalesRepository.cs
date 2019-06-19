@@ -1,6 +1,7 @@
 ﻿using GeekBurger.Dashboard.Repository.DataContext;
 using GeekBurger.Dashboard.Repository.Interfaces;
 using GeekBurger.Dashboard.Repository.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,31 +19,31 @@ namespace GeekBurger.Dashboard.Repository
             _dashboardContext = dashboardContext;
         }
 
-        public IEnumerable<Sales> GetAllSalesCompleted()
+        public async Task<IEnumerable<Sales>> GetAllSalesCompleted()
         {
-            return _dashboardContext.Sales?.Where(s => s.State == State.Finished);
+            return await _dashboardContext.Sales?.Where(s => s.State == State.Finished).ToListAsync();
         }
 
-        public Sales GetByOrderId(string orderId)
+        public async Task<Sales> GetByOrderId(string orderId)
         {
-            return _dashboardContext.Sales.First(s => s.OrderId == orderId);
+            return await _dashboardContext.Sales.FirstAsync(s => s.OrderId == orderId);
         }
 
-        public void Insert(Sales sales)
+        public async Task Insert(Sales sales)
         {
-            _dashboardContext.Sales.Add(sales);
-            _dashboardContext.SaveChanges();
+            await _dashboardContext.Sales.AddAsync(sales);
+            await _dashboardContext.SaveChangesAsync();
         }
 
-        public bool OrderExists(string orderId)
+        public async Task<bool> OrderExists(string orderId)
         {
-            return _dashboardContext.Sales.Any(s => s.OrderId == orderId);
+            return await _dashboardContext.Sales.AnyAsync(s => s.OrderId == orderId);
         }
 
-        public void Update(Sales sales)
+        public async Task Update(Sales sales)
         {
             _dashboardContext.Sales.Update(sales);
-            _dashboardContext.SaveChanges();
+            await _dashboardContext.SaveChangesAsync();
         }
     }
 }

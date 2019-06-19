@@ -13,7 +13,7 @@ namespace GeekBurger.Dashboard.AutoMapper
         public AutoMapperProfile()
         {
             CreateMap<Sales, SalesDTO>();
-            CreateMap<UsersRestrictions, UsersRestrictionsDTO>();
+            CreateMap<UserWithLessOffer, UsersRestrictionsDTO>();
         }
 
     }
