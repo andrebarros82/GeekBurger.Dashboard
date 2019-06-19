@@ -76,6 +76,17 @@ namespace GeekBurger.Dashboard.Controllers
                 StatusCode = (int)HttpStatusCode.OK,
                 Content = System.IO.File.ReadAllText("Views/chart.html")
             };
-        }    
+        }
+
+        [HttpGet("chart/{per}/{value}")]
+        public ContentResult GetChart(string per, int value)
+        {
+            return new ContentResult
+            {
+                ContentType = "text/html",
+                StatusCode = (int)HttpStatusCode.OK,
+                Content = System.IO.File.ReadAllText("Views/chart.html")
+            };
+        }
     }
 }
