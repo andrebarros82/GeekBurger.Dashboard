@@ -22,6 +22,10 @@ namespace GeekBurger.Dashboard.ServiceBus
             _connectionString = serviceBusInfo.ConnectionString;
         }
 
+        /// <summary>
+        /// Loga exceções ocorridas na API
+        /// </summary>
+        /// <param name="message"></param>
         public void Log(string message)
         {
             _message = message;
@@ -36,6 +40,10 @@ namespace GeekBurger.Dashboard.ServiceBus
             await topicClient.CloseAsync();
         }
 
+        /// <summary>
+        /// Envia uma messagem para o tópico "log" contendo a exceção.
+        /// </summary>
+        /// <returns>Task</returns>
         public async Task SendMessagesAsync()
         {
             try

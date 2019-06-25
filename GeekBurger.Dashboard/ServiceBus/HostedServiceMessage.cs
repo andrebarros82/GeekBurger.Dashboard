@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 
 namespace GeekBurger.Dashboard.ServiceBus
 {
+    /// <summary>
+    /// Classe com lógica da tarefa(ServiceBus) em segundo plano que implementa a interface IHostedService. 
+    /// </summary>
     public class HostedServiceMessage : IHostedService
     {
         private readonly ILogger _logger;       
@@ -43,26 +46,41 @@ namespace GeekBurger.Dashboard.ServiceBus
             _subscriptionClientNewOrder = new SubscriptionClient(serviceBusInfo.ConnectionString, "neworder", "Dashboard");
         }
 
+        /// <summary>
+        /// Contém a lógica para iniciar a tarefa em segundo plano.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Task</returns>
         public Task StartAsync(CancellationToken cancellationToken)
         {         
             DoWork();
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Contém a lógica para encerrar a tarefa em segundo plano.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _logMessage.Log("O serviço em segundo plano está sendo interrompido.");
             return Task.CompletedTask;
         }
-        
-        private void DoWork()
-        {
-            // Receber mensagens em um loop
-            ReceiveMessage();
-        }  
 
+        /// <summary>
+        /// Contém a lógica para das tarefas executadas em segundo plano.
+        /// </summary>
+        private void DoWork()
+        {            
+            ReceiveMessage();
+        }
+
+        /// <summary>
+        /// Contém a lógica para receber as mensagens em um loop
+        /// </summary>
         private void ReceiveMessage()
-        { 
+        {
             // MessageHandler para tratamento de exceções, número de mensagens simultâneas a serem processadas
             MessageHandlerOptions messageHandlerOptions = new MessageHandlerOptions(ExceptionHandler)
             {
@@ -80,6 +98,12 @@ namespace GeekBurger.Dashboard.ServiceBus
             _subscriptionClientNewOrder.RegisterMessageHandler(MessageHandlerNewOrder, messageHandlerOptions);
         }
 
+        /// <summary>
+        /// Contém a lógica para processar as mensagens do tópico UserWithLessOffer
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Task</returns>
         private async Task MessageHandlerUserWithLessOffer(Message message, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Mensagem recebida: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
@@ -93,6 +117,12 @@ namespace GeekBurger.Dashboard.ServiceBus
             await _subscriptionClientUserWithLessOffer.CompleteAsync(message.SystemProperties.LockToken);
         }
 
+        /// <summary>
+        /// Contém a lógica para processar as mensagens do tópico OrderChanged
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Task</returns>
         public async Task MessageHandlerOrderChanged(Message message, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Mensagem recebida: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
@@ -110,6 +140,12 @@ namespace GeekBurger.Dashboard.ServiceBus
             await _subscriptionClientOrderChanged.CompleteAsync(message.SystemProperties.LockToken);
         }
 
+        /// <summary>
+        /// Contém a lógica para processar as mensagens do tópico NewOrder
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task MessageHandlerNewOrder(Message message, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Mensagem recebida: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
@@ -126,6 +162,12 @@ namespace GeekBurger.Dashboard.ServiceBus
             await _subscriptionClientNewOrder.CompleteAsync(message.SystemProperties.LockToken);
         }
 
+        /// <summary>
+        /// Ocorre quando uma exceção é recebida.
+        /// Log da exceção "ExceptionReceivedEventArgs" é enviada para o tópico "log".
+        /// </summary>
+        /// <param name="exceptionReceivedEventArgs"></param>
+        /// <returns></returns>
         public Task ExceptionHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
         {
             _logger.LogInformation($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");

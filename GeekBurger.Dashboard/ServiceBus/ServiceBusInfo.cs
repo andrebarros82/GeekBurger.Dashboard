@@ -4,6 +4,9 @@ using System.Text;
 
 namespace GeekBurger.Dashboard.ServiceBus
 {
+    /// <summary>
+    /// POCO para informações sobre as configurações de conexão do ServiceBus
+    /// </summary>
     public class ServiceBusInfo
     {
         public string ResourceGroup { get; set; }
