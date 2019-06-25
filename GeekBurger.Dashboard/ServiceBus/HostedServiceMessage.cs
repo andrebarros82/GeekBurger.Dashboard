@@ -51,7 +51,8 @@ namespace GeekBurger.Dashboard.ServiceBus
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _logMessage.Log("O serviço em segundo plano está sendo interrompido.");
+            return Task.CompletedTask;
         }
         
         private void DoWork()
@@ -84,12 +85,6 @@ namespace GeekBurger.Dashboard.ServiceBus
             _logger.LogInformation($"Mensagem recebida: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
 
             UserWithLessOffer userWithLessOffer = JsonConvert.DeserializeObject<UserWithLessOffer>(Encoding.UTF8.GetString(message.Body));
-
-            foreach(string restriction in userWithLessOffer.Restrictions)
-            {
-                userWithLessOffer.UserRestrictions = new List<UserRestriction>();
-                userWithLessOffer.UserRestrictions.Add(new UserRestriction { Restriction = restriction });
-            }
 
             await _userWithLessOfferService.Insert(userWithLessOffer);
 

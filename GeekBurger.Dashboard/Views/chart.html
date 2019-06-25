@@ -5,21 +5,24 @@
     <title></title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script type="text/javascript">
 
         var stores = [];
         var orders = [];
-        var values = [];       
+        var values = [];
 
         // usersWithLessOffer
         $.ajax({
             url: 'http://localhost:51174/api/dashboard/usersWithLessOffer',
             method: 'GET',
             accept: 'application/json',
-            success(restrictions) {
-                restrictions.forEach(function (e) {
+            success(response) {
+                var restrictions = [];
+                response.forEach(function (e) {
                     restrictions.push({
-                        'name': e.restrictions, 'y': e.users
+                        'name': e.restrictions, 'y': e.user
                     });
                 });
                 usersWithLessOffer(restrictions);
@@ -33,17 +36,18 @@
             Highcharts.chart('usersWithLessOffer', {
                 chart: { type: 'pie' },
                 title: {
-                    text: 'Users with less product offering (less than 4 products in Kiosk)'
+                    text: 'Users with less product offering (less than 2 products in Kiosk)'
                 },
-            tooltip: {
-                pointFormat: '{series.name}: < b > { point.percentage: .1f } %</b > ' },
+                tooltip: {
+                    pointFormat: '{series.name}: <b> { point.percentage: .1f } %</b > '
+                },
                 plotOptions: {
                     pie: {
                         allowPointSelect: true,
-                            cursor: 'pointer',
-                                dataLabels: {
+                        cursor: 'pointer',
+                        dataLabels: {
                             enabled: true,
-                                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
                         }
                     }
                 },
@@ -129,7 +133,7 @@
             });
         }
 
-         function getParamsMap() {
+        function getParamsMap() {
             var params = window.location.search.split("&");
             var paramsMap = {};
             params.forEach(function (p) {
@@ -139,10 +143,11 @@
             return paramsMap;
         };
 
-       
+
     </script>
 </head>
 <body>
     <div id="sales"></div>
+    <div id="usersWithLessOffer"></div>
 </body>
 </html>

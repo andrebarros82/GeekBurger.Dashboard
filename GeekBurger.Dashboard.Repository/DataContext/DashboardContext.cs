@@ -12,10 +12,10 @@ namespace GeekBurger.Dashboard.Repository.DataContext
     {
         public DashboardContext(DbContextOptionsBuilder<DashboardContext> options) : base(options.Options)
         {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
-        public DbSet<UserRestriction> UserRestrictions { get; set; }
         public DbSet<UserWithLessOffer> UserWithLessOffers { get; set; }
         public DbSet<Sales> Sales { get; set; }
         public DbSet<UserWithLessOffer> UsersRestrictions { get; set; }
@@ -24,7 +24,6 @@ namespace GeekBurger.Dashboard.Repository.DataContext
         {       
             modelBuilder.ApplyConfiguration(new SalesMap());
             modelBuilder.ApplyConfiguration(new UserWithLessOfferMap());
-            modelBuilder.ApplyConfiguration(new UserRestrictionMap());
             base.OnModelCreating(modelBuilder);
         }
     }

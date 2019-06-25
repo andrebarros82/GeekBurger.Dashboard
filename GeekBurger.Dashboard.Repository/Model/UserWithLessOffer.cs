@@ -10,19 +10,21 @@ namespace GeekBurger.Dashboard.Repository.Model
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int UserId { get; set; }
-
+        public Guid UserId { get; set; }
+        
         [NotMapped]
         public string[] Restrictions;
-        public List<UserRestriction> UserRestrictions { get; set; }
-    }
 
-    public class UserRestriction
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        public string Restriction { get; set; }
-        public UserWithLessOffer UserWithLessOffer { get; set; }
+        public string RestrictionsUser
+        {
+            get
+            {
+                return string.Join(",", Restrictions);
+            }
+            set
+            {
+                RestrictionsUser = string.Join(",", Restrictions);
+            }
+        }        
     }
 }

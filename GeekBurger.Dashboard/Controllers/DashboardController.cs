@@ -53,19 +53,16 @@ namespace GeekBurger.Dashboard.Controllers
             IEnumerable<SalesDTO> salesDTOs = _salesService.GetAllPaidSalesByPeriod(dataCorte).Result.GroupBy(g => g.StoreName)
                                            .Select(x => new SalesDTO { StoreName = x.Key, Total = x.Count(), Value = x.Sum(s => s.Value) });
 
-            if (salesDTOs.ToList().Count > 0)
-                return Ok(salesDTOs);
-            else
-                return NotFound();
+            return Ok(salesDTOs);
         }
 
         [HttpGet("usersWithLessOffer")]
         public IActionResult GetUsersWithLessOffer()
         {
-            IEnumerable<UsersRestrictionsDTO> usersRestrictionsDTOs = _userWithLessOfferService.GetAll().Result.GroupBy(g => g.UserId)
-                                 .Select(x => new UsersRestrictionsDTO { User = x.Key, Restrictions = x.Count() });
+            IEnumerable<UsersRestrictionsDTO> usersRestrictionsDTOs = _userWithLessOfferService.GetAll().Result.GroupBy(x => x.RestrictionsUser)
+                                 .Select(x => new UsersRestrictionsDTO { User = x.Count(), Restrictions = x.Key });
 
-            return Ok();
+            return Ok(usersRestrictionsDTOs);
         }
 
         [HttpGet("chart")]
