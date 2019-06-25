@@ -15,11 +15,19 @@ namespace GeekBurger.Dashboard.Services
             _userWithLessOfferRepository = userWithLessOfferRepository;
         }
 
+        /// <summary>
+        /// Pega todos os registro da tabela UserWithLessOffer.
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<UserWithLessOffer>> GetAll()
         {
            return await _userWithLessOfferRepository.GetAll();
         }
-
+        /// <summary>
+        /// Inseri um UserWithLessOffer na base de dados.
+        /// </summary>
+        /// <param name="userWithLessOffer"></param>
+        /// <returns>Task</returns>
         public async Task Insert(UserWithLessOffer userWithLessOffer)
         {
             await _userWithLessOfferRepository.Insert(userWithLessOffer);

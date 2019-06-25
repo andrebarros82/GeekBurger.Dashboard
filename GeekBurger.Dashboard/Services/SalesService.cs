@@ -16,22 +16,40 @@ namespace GeekBurger.Dashboard.Services
             _salesRepository = salesRepository;
         }
 
+        /// <summary>
+        /// Obtém um objeto Sales pelo OrderId
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>Task<Sales></returns>
         public async Task<Sales> GetByOrderId(string orderId)
         {
             return await _salesRepository.GetByOrderId(orderId);
         }
 
+        /// <summary>
+        /// Obtém uma lista q contém todas as vendas finalizadas.
+        /// </summary>  
+        /// <returns>Task</returns>
         public async Task<IEnumerable<Sales>> GetAllSalesCompleted()
         {
             return await _salesRepository.GetAllSalesCompleted();
         }
 
+        /// <summary>
+        /// Obtém uma lista q contém todas as vendas por período.
+        /// </summary>
+        /// <param name="dataCorte"></param>
+        /// <returns>Task</returns>
         public async Task<IEnumerable<Sales>> GetAllPaidSalesByPeriod(DateTime dataCorte)
         {
             return await _salesRepository.GetAllPaidSalesByPeriod(dataCorte);
-    }
+        }
 
-        
+        /// <summary>
+        /// Inseri uma venda na base de dados
+        /// </summary>
+        /// <param name="sales"></param>
+        /// <returns>Task</returns>
         public async Task Insert(Sales sales)
         {
             sales.State = State.Open;
@@ -40,11 +58,21 @@ namespace GeekBurger.Dashboard.Services
             await _salesRepository.Insert(sales);
         }
 
+        /// <summary>
+        /// Verifica se uma determinada venda já existe na base de dados.
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>Task</returns>
         public async Task<bool> OrderExists(string orderId)
         {
             return await _salesRepository.OrderExists(orderId);
         }
 
+        /// <summary>
+        /// Atualiza uma venda na base de dados.
+        /// </summary>
+        /// <param name="sales"></param>
+        /// <returns>Task</returns>
         public async Task Update(Sales sales)
         {
             await _salesRepository.Update(sales);

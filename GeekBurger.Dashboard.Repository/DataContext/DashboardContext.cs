@@ -11,8 +11,7 @@ namespace GeekBurger.Dashboard.Repository.DataContext
     public class DashboardContext : DbContext
     {
         public DashboardContext(DbContextOptionsBuilder<DashboardContext> options) : base(options.Options)
-        {
-            Database.EnsureDeleted();
+        {         
             Database.EnsureCreated();
         }
 
