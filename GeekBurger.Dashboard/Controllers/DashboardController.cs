@@ -26,6 +26,11 @@ namespace GeekBurger.Dashboard.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Retorna todas as vendas finalizadas
+        /// api/dashboard/sales/
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("sales")]
         public IActionResult GetSales()
         {
@@ -38,6 +43,13 @@ namespace GeekBurger.Dashboard.Controllers
                 return NotFound();
         }
 
+        /// <summary>
+        /// Retorna todas as vendas finalizadas por período 
+        /// api/dashboard/sales/minute/30
+        /// </summary>
+        /// <param name="per"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         [HttpGet("sales/{per}/{value}")]
         public IActionResult GetSales(string per, int value)
         {
@@ -56,6 +68,11 @@ namespace GeekBurger.Dashboard.Controllers
             return Ok(salesDTOs);
         }
 
+        /// <summary>
+        /// Retorna todas as restrições dos usuários
+        /// api/dashboard/usersWithLessOffer/
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("usersWithLessOffer")]
         public IActionResult GetUsersWithLessOffer()
         {
@@ -65,6 +82,11 @@ namespace GeekBurger.Dashboard.Controllers
             return Ok(usersRestrictionsDTOs);
         }
 
+        /// <summary>
+        /// api/dashboard/chart/
+        /// Exibi o gráfico com todas as vendas realizadas e com todas as restrições dos usuários
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("chart")]
         public ContentResult GetChart()
         {
@@ -76,6 +98,13 @@ namespace GeekBurger.Dashboard.Controllers
             };
         }
 
+        /// <summary>
+        /// Exibi o gráfico com todas as vendas realizadas por período e com todas as restrições dos usuários
+        /// api/dashboard/chart/minute/30
+        /// </summary>
+        /// <param name="per"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         [HttpGet("chart/{per}/{value}")]
         public ContentResult GetChart(string per, int value)
         {

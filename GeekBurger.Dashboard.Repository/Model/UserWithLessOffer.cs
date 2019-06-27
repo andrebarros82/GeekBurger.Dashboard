@@ -19,11 +19,15 @@ namespace GeekBurger.Dashboard.Repository.Model
         {
             get
             {
-                return string.Join(",", Restrictions);
+                if (Restrictions != null)
+                    return string.Join(",", Restrictions);
+                else
+                    return string.Empty;
             }
             set
             {
-                RestrictionsUser = string.Join(",", Restrictions);
+                if (Restrictions != null)
+                    RestrictionsUser = string.Join(",", Restrictions);
             }
         }        
     }

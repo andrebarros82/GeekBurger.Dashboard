@@ -20,6 +20,9 @@ namespace GeekBurger.Dashboard.Repository.Model
         public DateTime CreatedAt { get; set; }
     }
 
+    /// <summary>
+    /// Status do pedido
+    /// </summary>
     public enum State
     {
         Open,
